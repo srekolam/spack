@@ -31,12 +31,20 @@ class Rocclr(CMakePackage):
 
     patch('opengl.patch', when='@3.5.0')
 
-    resource(name='opencl-on-vdi',
-             url='https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/archive/roc-3.5.0.tar.gz',
-             sha256='511b617d5192f2d4893603c1a02402b2ac9556e9806ff09dd2a91d398abf39a0',
-             expand=True,
-             destination='',
-             placement='opencl-on-vdi')
+    if ver >= '3.7.0':
+        resource(name='opencl-on-vdi',
+                 url='https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/archive/rocm-3.7.0.tar.gz',
+                 sha256='283e1dfe4c3d2e8af4d677ed3c20e975393cdb0856e3ccd77b9c7ed2a151650b',
+                 expand=True,
+                 destination='',
+                 placement='opencl-on-vdi')
+    else:
+        resource(name='opencl-on-vdi',
+                 url='https://github.com/RadeonOpenCompute/ROCm-OpenCL-Runtime/archive/roc-3.5.0.tar.gz',
+                 sha256='511b617d5192f2d4893603c1a02402b2ac9556e9806ff09dd2a91d398abf39a0',
+                 expand=True,
+                 destination='',
+                 placement='opencl-on-vdi')
 
     @run_after('install')
     def deploy_missing_files(self):
