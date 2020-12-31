@@ -105,7 +105,8 @@ class Hip(CMakePackage):
         env.set('ROCMINFO_PATH', rocm_prefixes['rocminfo'])
         env.set('DEVICE_LIB_PATH', rocm_prefixes['device_lib_path'])
         env.set('HIP_PATH', rocm_prefixes['rocm-path'])
-        env.set('HIPCC_COMPILE_FLAGS_APPEND',
+        if '@3.8.0:' in self.spec:
+            env.set('HIPCC_COMPILE_FLAGS_APPEND',
                 '--rocm-path={0}'.format(rocm_prefixes['device_lib_path']))
 
     def setup_run_environment(self, env):
