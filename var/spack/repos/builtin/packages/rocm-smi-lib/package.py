@@ -6,6 +6,7 @@
 
 from spack import *
 import shutil
+import os
 
 
 class RocmSmiLib(CMakePackage):
@@ -44,3 +45,6 @@ class RocmSmiLib(CMakePackage):
         shutil.rmtree(self.prefix.lib)
         install_tree(self.prefix.rocm_smi,  self.prefix)
         shutil.rmtree(self.prefix.rocm_smi)
+        os.remove(join_path(self.prefix.bin, 'rsmiBindings.py'))
+        symlink('../bindings/rsmiBindings.py',
+                join_path(self.prefix.bin, 'rsmiBindings.py'))
