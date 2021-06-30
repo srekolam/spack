@@ -3,10 +3,9 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-
-from spack import *
-import shutil
 import os
+import shutil
+from spack import *
 
 
 class RocmSmiLib(CMakePackage):
