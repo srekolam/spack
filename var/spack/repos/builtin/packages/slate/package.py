@@ -55,6 +55,12 @@ class Slate(CMakePackage, CudaPackage, ROCmPackage):
     conflicts('%intel@19:', msg='Does not currently build with icpc >= 2019')
     conflicts('+rocm', when='@:2020.10.00', msg='ROCm support requires SLATE 2021.05.01 or greater')
     conflicts('+rocm', when='+cuda', msg='SLATE only supports one GPU backend at a time')
+    def patch(self):
+        if '+rocm' in self.spec:
+            filter_file('hipify-perl',
+                         '{0}/hipify-perl'.format(self.spec['hipify-clang'].prefix),
+                        'CMakeLists.txt',
+                        string=True)
 
     def cmake_args(self):
         spec = self.spec
