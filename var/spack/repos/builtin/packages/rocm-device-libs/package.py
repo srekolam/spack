@@ -12,12 +12,13 @@ class RocmDeviceLibs(CMakePackage):
 
     homepage = "https://github.com/RadeonOpenCompute/ROCm-Device-Libs"
     git      = "https://github.com/RadeonOpenCompute/ROCm-Device-Libs.git"
-    url      = "https://github.com/RadeonOpenCompute/ROCm-Device-Libs/archive/rocm-5.1.3.tar.gz"
+    url      = "https://github.com/RadeonOpenCompute/ROCm-Device-Libs/archive/rocm-5.2.0.tar.gz"
     tags     = ['rocm']
 
-    maintainers = ['srekolam', 'arjun-raj-kuppala', 'haampie']
+    maintainers = ['srekolam', 'renjithravindrankannath', 'haampie']
 
     version('master', branch='amd-stg-open')
+    version('5.2.0', sha256='901674bc941115c72f82c5def61d42f2bebee687aefd30a460905996f838e16c')
     version('5.1.3', sha256='c41958560ec29c8bf91332b9f668793463904a2081c330c0d828bf2f91d4f04e')
     version('5.1.0', sha256='47dbcb41fb4739219cadc9f2b5f21358ed2f9895ce786d2f7a1b2c4fd044d30f')
     version('5.0.2', sha256='49cfa8f8fc276ba27feef40546788a2aabe259a924a97af8bef24e295d19aa5e')
@@ -51,7 +52,7 @@ class RocmDeviceLibs(CMakePackage):
 
     for ver in ['3.5.0', '3.7.0', '3.8.0', '3.9.0', '3.10.0', '4.0.0', '4.1.0',
                 '4.2.0', '4.3.0', '4.3.1', '4.5.0', '4.5.2', '5.0.0', '5.0.2',
-                '5.1.0', '5.1.3', 'master']:
+                '5.1.0', '5.1.3', '5.2.0', 'master']:
         depends_on('llvm-amdgpu@' + ver, when='@' + ver)
 
     def cmake_args(self):

@@ -22,6 +22,7 @@ class Rocrand(CMakePackage):
     maintainers = ['srekolam', 'arjun-raj-kuppala']
     libraries = ['librocrand']
 
+    version('5.2.0', sha256='ab3057e7c17a9fbe584f89ef98ec92a74d638a98d333e7d0f64daf7bc9051e38')
     version('5.1.3', sha256='4a19e1bcb60955a02a73ad64594c23886d6749afe06b0104e2b877dbe02c8d1c')
     version('5.1.0', sha256='0c6f114a775d0b38be71f3f621a10bde2104a1f655d5d68c5fecb79b8b51a815')
     version('5.0.2', sha256='2dbce2a7fb273c2f9456c002adf3a510b9ec79f2ff32dfccdd59948f3ddb1505')
@@ -58,7 +59,7 @@ class Rocrand(CMakePackage):
 
     for ver in ['3.5.0', '3.7.0', '3.8.0', '3.9.0', '3.10.0', '4.0.0', '4.1.0',
                 '4.2.0', '4.3.0', '4.3.1', '4.5.0', '4.5.2', '5.0.0', '5.0.2',
-                '5.1.0', '5.1.3']:
+                '5.1.0', '5.1.3', '5.2.0']:
         depends_on('hip@' + ver, when='@' + ver)
         depends_on('rocm-cmake@%s:' % ver, type='build', when='@' + ver)
 
@@ -109,9 +110,7 @@ class Rocrand(CMakePackage):
             with working_dir(rocrand_path):
                 for header_file in rocrand_includes:
                     os.symlink(join_path('include', header_file), header_file)
-        else:
-            os.mkdir(os.path.join(self.prefix, 'hiprand'))
-            os.mkdir(os.path.join(self.prefix, 'hiprand', 'include'))
+        elif self.spec.satisfies('@5.1.0:5.1.3'):
             hiprand_include_path = join_path(self.prefix, 'include', 'hiprand')
             with working_dir(hiprand_include_path):
                 hiprand_includes = glob.glob('*.h*')

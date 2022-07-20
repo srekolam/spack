@@ -19,7 +19,7 @@ class Atmi(CMakePackage):
     tags     = ['rocm']
 
     maintainers = ['srekolam', 'arjun-raj-kuppala']
-
+    version('5.2.0', sha256='33e77905a607734157d46c736c924c7c50b6b13f2b2ddbf711cb08e37f2efa4f')
     version('5.1.3', sha256='a43448d77705b2b07e1758ffe8035aa6ba146abc2167984e8cb0f1615797b341')
     version('5.1.0', sha256='6a758f5a8332e6774cd8e14a4e5ce05e43b1e05298d817b4068c35fa1793d333')
     version('5.0.2', sha256='3aea040f5a246539ab118f2183cf3e802a21e0e6215a53025eda77f382341747')

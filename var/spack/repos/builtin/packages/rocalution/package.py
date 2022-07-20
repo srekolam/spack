@@ -24,6 +24,7 @@ class Rocalution(CMakePackage):
     maintainers = ['srekolam', 'arjun-raj-kuppala']
     libraries = ['librocalution_hip']
 
+    version('5.2.0', sha256='a5aac471bbec87d019ad7c6db779c73327ad40ecdea09dc5ab2106e62cd6b7eb')
     version('5.1.3', sha256='7febe8179f120cbe58ea255bc233ad5d1b4c106f3934eb8e670135a8b7bd09c7')
     version('5.1.0', sha256='d9122189103ebafe7ec5aeb50e60f3e02af5c2747021f9071aab91e7f875c29e')
     version('5.0.2', sha256='b01adaf858b9c3683523b087a55fafb655864f5db8e2a1acdbf588f53d6972e2')
@@ -47,9 +48,11 @@ class Rocalution(CMakePackage):
     variant('build_type', default='Release', values=("Release", "Debug", "RelWithDebInfo"), description='CMake build type')
 
     depends_on('cmake@3.5:', type='build')
+    patch('0003-fix-compilation-for-rocalution-5.2.0.patch', when='@5.2.0:')
+
     for ver in ['3.5.0', '3.7.0', '3.8.0', '3.9.0', '3.10.0', '4.0.0', '4.1.0',
                 '4.2.0', '4.3.0', '4.3.1', '4.5.0', '4.5.2', '5.0.0',
-                '5.0.2', '5.1.0', '5.1.3']:
+                '5.0.2', '5.1.0', '5.1.3', '5.2.0']:
         depends_on('hip@' + ver, when='@' + ver)
         depends_on('rocprim@' + ver, when='@' + ver)
         for tgt in itertools.chain(['auto'], amdgpu_targets):
@@ -62,7 +65,7 @@ class Rocalution(CMakePackage):
 
     for ver in ['3.9.0', '3.10.0', '4.0.0', '4.1.0', '4.2.0',
                 '4.3.0', '4.3.1', '4.5.0', '4.5.2', '5.0.0',
-                '5.0.2', '5.1.0', '5.1.3']:
+                '5.0.2', '5.1.0', '5.1.3', '5.2.0']:
         for tgt in itertools.chain(['auto'], amdgpu_targets):
             depends_on('rocrand@{0} amdgpu_target={1}'.format(ver, tgt),
                        when='@{0} amdgpu_target={1}'.format(ver, tgt))
@@ -100,17 +103,29 @@ class Rocalution(CMakePackage):
 
     def cmake_args(self):
         args = [
-            self.define('CMAKE_MODULE_PATH', self.spec['hip'].prefix.cmake),
             self.define('SUPPORT_HIP', 'ON'),
             self.define('SUPPORT_MPI', 'OFF'),
             self.define('BUILD_CLIENTS_SAMPLES', 'OFF'),
+            self.define('BUILD_CLIENTS', 'OFF'),
             self.define('BUILD_CLIENTS_TESTS', self.run_tests),
         ]
-
+        if self.spec.satisfies('@:5.1.3'):
+            args.append(
+                '-DCMAKE_MODULE_PATH={0}'.
+                format(self.spec['hip'].prefix.cmake)
+            )
+        elif self.spec.satisfies('@5.2.0:'):
+            args.append(
+                '-DCMAKE_MODULE_PATH={0}/lib/cmake/hip'.
+                format(self.spec['hip'].prefix)
+            )
         if 'auto' not in self.spec.variants['amdgpu_target']:
             args.append(self.define_from_variant('AMDGPU_TARGETS', 'amdgpu_target'))
 
         if self.spec.satisfies('^cmake@3.21.0:3.21.2'):
             args.append(self.define('__skip_rocmclang', 'ON'))
+
+        if self.spec.satisfies('@5.2.0:'):
+            args.append(self.define('BUILD_FILE_REORG_BACKWARD_COMPATIBILITY', 'ON'))
 
         return args

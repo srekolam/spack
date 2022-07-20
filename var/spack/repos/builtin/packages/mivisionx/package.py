@@ -24,6 +24,7 @@ class Mivisionx(CMakePackage):
         url = "https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
+    version('5.2.0', sha256='fee620a1edd3bce18b2cec9ef26ec2afe0a85d6da8a37ed713ab0d1342382503')
     version('5.1.3', sha256='62591d5caedc13832c3ccef629a88d9c2a43c884daad1124ddcb9c5f7d5470e9')
     version('5.1.0', sha256='e082415cc2fb859c53a6d6e5d72ca4529f6b4d56a4abe274dc374faaa5910513')
     version('5.0.2', sha256='da730c2347b7f2d0cb7a262f8305750988f18e9f1eb206cf297bacaab2f6b408')
@@ -54,7 +55,7 @@ class Mivisionx(CMakePackage):
                         self.spec['mivisionx'].prefix.include,
                         'utilities/mv_deploy/CMakeLists.txt',
                         string=True)
-        if '@4.5.0:' in self.spec:
+        if '@4.5.0:5.1.3' in self.spec:
             filter_file('${ROCM_PATH}/miopen',
                         self.spec['miopen-hip'].prefix.miopen,
                         'amd_openvx_extensions/CMakeLists.txt',
@@ -67,14 +68,18 @@ class Mivisionx(CMakePackage):
                         self.spec['hip'].prefix.bin,
                         'amd_openvx_extensions/amd_nn/nn_hip/CMakeLists.txt',
                         string=True)
-
-    def flag_handler(self, name, flags):
-        spec = self.spec
-        protobuf = spec['protobuf'].prefix.include
-        if name == 'cxxflags':
-            flags.append('-I{0}'.format(protobuf))
-        return (flags, None, None)
-
+        if '@5.1.3:' and 'backend=HIP' in self.spec:
+            filter_file('${ROCM_PATH}/include/miopen/config.h',
+                        '{0}/include/miopen/config.h'.format(
+                            self.spec['miopen-hip'].prefix),
+                        'amd_openvx_extensions/CMakeLists.txt',
+                        string=True)
+        elif '@5.1.3:' and 'backend=OPENCL' in self.spec:
+            filter_file('${ROCM_PATH}/include/miopen/config.h',
+                        '{0}/include/miopen/config.h'.format(
+                            self.spec['miopen-opencl'].prefix),
+                        'amd_openvx_extensions/CMakeLists.txt',
+                        string=True)
     depends_on('cmake@3.5:', type='build')
     depends_on('ffmpeg@:4', type='build')
     depends_on('protobuf@:3', type='build')
@@ -86,14 +91,24 @@ class Mivisionx(CMakePackage):
     depends_on('openssl', when='@4.0.0:')
     conflicts('^cmake@3.22:', when='@:5.0.0')
 
-    for ver in ['3.7.0', '3.8.0', '3.9.0', '3.10.0', '4.0.0', '4.1.0', '4.2.0',
-                '4.3.0', '4.3.1', '4.5.0', '4.5.2', '5.0.0',
-                '5.0.2', '5.1.0', '5.1.3']:
-        depends_on('rocm-opencl@' + ver,   when='@' + ver)
-        depends_on('miopengemm@' + ver,    when='@' + ver)
-        depends_on('miopen-opencl@' + ver, when='@' + ver)
-    for ver in ['4.5.0', '4.5.2', '5.0.0', '5.0.2', '5.1.0', '5.1.3']:
-        depends_on('miopen-hip@' + ver,   when='@' + ver)
+    with when("backend=OPENCL"):
+        for ver in ['3.7.0', '3.8.0', '3.9.0', '3.10.0', '4.0.0', '4.1.0', '4.2.0',
+                    '4.3.0', '4.3.1', '4.5.0', '4.5.2', '5.0.0',
+                    '5.0.2', '5.1.0', '5.1.3', '5.2.0']:
+            depends_on('rocm-opencl@' + ver,   when='@' + ver)
+            depends_on('miopengemm@' + ver,    when='@' + ver)
+            depends_on('miopen-opencl@' + ver, when='@' + ver)
+
+    with when("backend=HIP"):
+        for ver in ['4.5.0', '4.5.2', '5.0.0', '5.0.2', '5.1.0', '5.1.3', '5.2.0']:
+            depends_on('miopen-hip@' + ver,   when='@' + ver)
+
+    def flag_handler(self, name, flags):
+        spec = self.spec
+        protobuf = spec['protobuf'].prefix.include
+        if name == 'cxxflags':
+            flags.append('-I{0}'.format(protobuf))
+        return (flags, None, None)
 
     def cmake_args(self):
         spec = self.spec

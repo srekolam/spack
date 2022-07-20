@@ -13,12 +13,13 @@ class Migraphx(CMakePackage):
 
     homepage = "https://github.com/ROCmSoftwarePlatform/AMDMIGraphX"
     git      = "https://github.com/ROCmSoftwarePlatform/AMDMIGraphX.git"
-    url = "https://github.com/ROCmSoftwarePlatform/AMDMIGraphX/archive/rocm-5.1.3.tar.gz"
+    url = "https://github.com/ROCmSoftwarePlatform/AMDMIGraphX/archive/rocm-5.2.0.tar.gz"
     tags     = ['rocm']
 
-    maintainers = ['srekolam', 'arjun-raj-kuppala']
+    maintainers = ['srekolam', 'renjithravindrankannath']
     libraries = ['libmigraphx']
 
+    version('5.2.0', sha256='33afcdf52c6e0e3a2f939fcf30e87f712b8e8ef3633a3dc03a19fea359704925')
     version('5.1.3', sha256='686e068774500a46b6e6488370bbf5bd0bba6d19ecdb00636f951704d19c9ef2')
     version('5.1.0', sha256='6398efaef18a74f2a475aa21bd34bc7c077332a430ee3f6ba4fde6e6a6aa9f89')
     version('5.0.2', sha256='3ef48ac03b909d1a1aa1f91f365ce64af2ce66635b6efb5ad0b207dc51ff2fd6')
@@ -48,7 +49,8 @@ class Migraphx(CMakePackage):
     variant('build_type', default='Release', values=("Release", "Debug", "RelWithDebInfo"), description='CMake build type')
 
     patch('0001-Adding-nlohmann-json-include-directory.patch', when='@3.9.0:')
-    patch('0002-restrict-python-2.7-usage.patch', when='@3.9.0:')
+    patch('0002-restrict-python-2.7-usage.patch', when='@3.9.0:5.1.3')
+    patch('0002-restrict-python-2.7-usage-5.2.0.patch', when='@5.2.0')
 
     depends_on('cmake@3.5:', type='build')
     depends_on('protobuf', type='link')
@@ -62,7 +64,7 @@ class Migraphx(CMakePackage):
 
     for ver in ['3.5.0', '3.7.0', '3.8.0', '3.9.0', '3.10.0', '4.0.0', '4.1.0',
                 '4.2.0', '4.3.0', '4.3.1', '4.5.0', '4.5.2', '5.0.0', '5.0.2',
-                '5.1.0', '5.1.3']:
+                '5.1.0', '5.1.3', '5.2.0']:
         depends_on('rocm-cmake@%s:' % ver, type='build', when='@' + ver)
         depends_on('hip@' + ver,                         when='@' + ver)
         depends_on('llvm-amdgpu@' + ver,                 when='@' + ver)
@@ -102,4 +104,7 @@ class Migraphx(CMakePackage):
 
         if self.spec['cmake'].satisfies('@3.16.0:'):
             args += self.cmake_python_hints
+
+        if self.spec.satisfies('@5.2.0:'):
+            args.append(self.define('BUILD_FILE_REORG_BACKWARD_COMPATIBILITY', 'ON'))
         return args
