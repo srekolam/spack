@@ -19,6 +19,7 @@ class Migraphx(CMakePackage):
     maintainers("srekolam", "renjithravindrankannath")
     libraries = ["libmigraphx"]
 
+    version("5.6.0", sha256="eaec90535d62002fd5bb264677ad4a7e30c55f18d2a287680d0495c7e60432b2")
     version("5.5.1", sha256="e71c4744f8ef6a1a99c179bbad94b8fe9bd7686eaa9397f376b70988c3341f0c")
     version("5.5.0", sha256="6084eb596b170f5e38f22b5fa37e66aa43a8cbc626712c9f03cde48c8fecfc8f")
     version("5.4.3", sha256="f83e7bbe5d6d0951fb2cf0abf7e8b3530e9a5e45f7cec6d760da055d6905d568")
@@ -122,7 +123,8 @@ class Migraphx(CMakePackage):
     depends_on("blaze", type="build")
     depends_on("nlohmann-json", type="link")
     depends_on("msgpack-c", type="link")
-    depends_on("half@1.12.0", type="link")
+    depends_on("half@1.12.0", type="link", when="@:5.5")
+    depends_on("half", when="@5.6:")
     depends_on("python@3.5:", type="build")
     depends_on("py-pybind11", type="build", when="@:4.0.0")
     depends_on("py-pybind11@2.6:", type="build", when="@4.1.0:")
@@ -154,6 +156,7 @@ class Migraphx(CMakePackage):
         "5.4.3",
         "5.5.0",
         "5.5.1",
+        "5.6.0",
     ]:
         depends_on("rocm-cmake@%s:" % ver, type="build", when="@" + ver)
         depends_on("hip@" + ver, when="@" + ver)
