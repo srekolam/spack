@@ -18,6 +18,7 @@ class Rocfft(CMakePackage):
 
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "haampie")
     libraries = ["librocfft"]
+    version("5.6.1", sha256="a65861e453587c3e6393da75b0b1976508c61f968aecda77fbec920fea48489e")
     version("5.6.0", sha256="e3d4a6c1bdac78f9a22033f57011af783d560308103f73542f9e0e4dd133d38a")
     version("5.5.1", sha256="57423a64f5cdb1c37ff0891b6c17b59f73198d46be42db4ae23781ef2c0cd49d")
     version("5.5.0", sha256="9288152e66504b06082e4eed8cdb791b4f9ae2836b3defbeb4d2b54901b96485")
@@ -124,7 +125,9 @@ class Rocfft(CMakePackage):
     depends_on("googletest@1.10.0:", type="test")
     depends_on("fftw@3.3.8:", type="test")
     depends_on("boost@1.64.0: +program_options", type="test")
-    depends_on("llvm-amdgpu +openmp", type="test")
+    #depends_on("rocm-openmp-extras", type="test", when="@5.6.0:")
+    depends_on("rocrand", type="test", when="@5.6.0:")
+    depends_on("hiprand", type="test", when="@5.6.0:")
 
     def check(self):
         exe = join_path(self.build_directory, "clients", "staging", "rocfft-test")
@@ -157,6 +160,7 @@ class Rocfft(CMakePackage):
         "5.5.0",
         "5.5.1",
         "5.6.0",
+        "5.6.1",
     ]:
         depends_on("hip@" + ver, when="@" + ver)
         depends_on("rocm-cmake@%s:" % ver, type="build", when="@" + ver)
@@ -216,5 +220,9 @@ class Rocfft(CMakePackage):
 
         if self.spec.satisfies("@5.3.0:"):
             args.append("-DCMAKE_INSTALL_LIBDIR=lib")
+
+        if self.run_tests:
+            #args.append(self.define("ROCM_OPENMP_EXTRAS_DIR", self.spec["rocm-openmp-extras"].prefix))
+            args.append(self.define("BUILD_CLIENTS_TESTS_OPENMP", "OFF"))
 
         return args
