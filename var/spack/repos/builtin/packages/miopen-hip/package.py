@@ -157,10 +157,11 @@ class MiopenHip(CMakePackage):
     for ver in ["5.1.0", "5.1.3", "5.2.0", "5.2.1", "5.2.3", "5.3.0", "5.3.3"]:
         depends_on("mlirmiopen@" + ver, when="@" + ver)
 
+    for ver in ["5.4.0", "5.4.3", "5.5.0", "5.5.1", "5.6.0", "5.6.1"]:
+        depends_on("nlohmann-json", type="link")
     for ver in ["5.4.0", "5.4.3", "5.5.0"]:
         depends_on("rocmlir@" + ver, when="@" + ver)
-    for ver in ["5.5.1", "5.6.0", "5.6.1"]:
-        depends_on("nlohmann-json", type="link")
+    for ver in ["5.5.1"]:
         depends_on("composable-kernel@" + ver, when="@" + ver)
 
     def setup_build_environment(self, env):
@@ -206,15 +207,14 @@ class MiopenHip(CMakePackage):
         if self.spec.satisfies("@5.1.0:5.3"):
             mlir_inc = spec["mlirmiopen"].prefix.include
             args.append(self.define("CMAKE_CXX_FLAGS", "-I{0}".format(mlir_inc)))
+        if self.spec.satisfies("@5.4.0:"):
+            args.append(
+                "-DNLOHMANN_JSON_INCLUDE={0}".format(self.spec["nlohmann-json"].prefix.include)
+            )
         if self.spec.satisfies("@5.4.0:5.5.0"):
             args.append(self.define("MIOPEN_USE_COMPOSABLEKERNEL", "OFF"))
-            args.append(self.define("MIOPEN_USE_MLIR", "ON"))
-            args.append(self.define("MIOPEN_ENABLE_AI_KERNEL_TUNING", "OFF"))
         if self.spec.satisfies("@5.5.1:"):
             args.append(self.define("MIOPEN_USE_COMPOSABLEKERNEL", "ON"))
             args.append(self.define("MIOPEN_USE_MLIR", "OFF"))
             args.append(self.define("MIOPEN_ENABLE_AI_KERNEL_TUNING", "OFF"))
-        args.append(
-            "-DNLOHMANN_JSON_INCLUDE={0}".format(self.spec["nlohmann-json"].prefix.include)
-        )
         return args
