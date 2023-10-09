@@ -15,7 +15,6 @@ class Hipfort(CMakePackage):
     tags = ["rocm"]
 
     maintainers("cgmb", "srekolam", "renjithravindrankannath")
-
     version("5.6.1", sha256="a55345cc9ccaf0cd69d306b8eb9ec2a02c220a57e9c396443cc7273aa3377adc")
     version("5.6.0", sha256="03176a099bc81e212ad1bf9d86f35561f8f2d21a2f126732d7620e1ea59888d5")
     version("5.5.1", sha256="abc59f7b81cbefbe3555cbf1bf0d80e8aa65901c70799748c40870fe6f3fea60")

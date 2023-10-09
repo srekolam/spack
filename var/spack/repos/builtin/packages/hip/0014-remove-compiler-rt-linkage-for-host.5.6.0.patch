@@ -1,5 +1,33 @@
+From cd4283eab943a3018237035afea61f1b5e0042cd Mon Sep 17 00:00:00 2001
+From: Renjith Ravindran <Renjith.RavindranKannath@amd.com>
+Date: Wed, 27 Sep 2023 06:38:18 +0000
+Subject: [PATCH] Remove-compiler-rt-linkage-for-host
+
+---
+ clr/hipamd/CMakeLists.txt      |  6 ++++--
+ clr/hipamd/hip-config.cmake.in |  1 -
+ hipcc/bin/hipcc.pl             | 11 ++++++++---
+ 3 files changed, 12 insertions(+), 6 deletions(-)
+
+diff --git a/clr/hipamd/CMakeLists.txt b/clr/hipamd/CMakeLists.txt
+index c14a9ad..ca49f7f 100755
+--- a/clr/hipamd/CMakeLists.txt
++++ b/clr/hipamd/CMakeLists.txt
+@@ -400,8 +400,10 @@ if (NOT ${HIPCC_BIN_DIR} STREQUAL "")
+   install(PROGRAMS ${HIPCC_BIN_DIR}/hipcc.pl DESTINATION bin)
+   install(PROGRAMS ${HIPCC_BIN_DIR}/hipconfig.pl DESTINATION bin)
+   install(PROGRAMS ${HIPCC_BIN_DIR}/hipvars.pm DESTINATION bin)
+-  install(PROGRAMS ${HIPCC_BIN_DIR}/hipcc.bat DESTINATION bin)
+-  install(PROGRAMS ${HIPCC_BIN_DIR}/hipconfig.bat DESTINATION bin)
++  if(WIN32)
++    install(PROGRAMS ${HIPCC_BIN_DIR}/hipcc.bat DESTINATION bin)
++    install(PROGRAMS ${HIPCC_BIN_DIR}/hipconfig.bat DESTINATION bin)
++  endif()
+ endif()
+ 
+ #############################
 diff --git a/clr/hipamd/hip-config.cmake.in b/clr/hipamd/hip-config.cmake.in
-index 575aaaf..317d3fc 100755
+index 537a599..7d10273 100755
 --- a/clr/hipamd/hip-config.cmake.in
 +++ b/clr/hipamd/hip-config.cmake.in
 @@ -245,7 +245,6 @@ if(HIP_COMPILER STREQUAL "clang")
@@ -42,3 +70,6 @@ index 56dcda2..c7ae60b 100755
              $targetsStr = `${ROCM_AGENT_ENUM} -t GPU`;
              $targetsStr =~ s/\n/,/g;
          }
+-- 
+2.31.1
+

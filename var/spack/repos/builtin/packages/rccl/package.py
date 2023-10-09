@@ -179,6 +179,7 @@ class Rccl(CMakePackage):
         "5.5.0",
         "5.5.1",
         "5.6.0",
+        "5.6.1",
     ]:
         depends_on("numactl@2:", when="@" + ver)
     for ver in [

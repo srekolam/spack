@@ -25,7 +25,6 @@ class Rocwmma(CMakePackage):
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath")
-
     version("5.6.1", sha256="41a5159ee1ad5fc411fe6220f37bd754e26d3883c24c0f2378f50ef628bc1b8f")
     version("5.6.0", sha256="78b6ab10fce71d10a9d762b2eaab3390eb13b05c764f47a3b0a303ec3d37acf8")
     version("5.5.1", sha256="ada30d5e52df5da0d3f4e212a25efb492dbedc129628f4db4ef4ed77667da228")
@@ -114,4 +113,5 @@ class Rocwmma(CMakePackage):
             args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
         if self.spec.satisfies("@5.6.0:"):
             args.append(self.define("ROCM_SMI_DIR", self.spec["rocm-smi-lib"].prefix))
+
         return args

@@ -116,6 +116,8 @@ class Mivisionx(CMakePackage):
     variant("opencl", default=False, description="Use OPENCL as the backend")
     variant("hip", default=True, description="Use HIP as backend")
 
+    conflicts("+opencl", when="@5.6.0:")
+
     def patch(self):
         if self.spec.satisfies("@4.2.0"):
             filter_file(
