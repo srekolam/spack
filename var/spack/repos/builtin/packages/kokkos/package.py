@@ -238,6 +238,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     # HPX version constraints
     depends_on("hpx@:1.6", when="@:3.5 +hpx")
     depends_on("hpx@1.7:", when="@3.6: +hpx")
+    depends_on("rocthrust", when="@3.6: +rocm")
 
     # Patches
     patch("hpx_profiling_fences.patch", when="@3.5.00 +hpx")

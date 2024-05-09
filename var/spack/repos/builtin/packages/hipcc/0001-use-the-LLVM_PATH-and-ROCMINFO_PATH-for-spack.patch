@@ -1,0 +1,44 @@
+From 510c1f5674ae00ffb08b4f342cde6f15b21c8376 Mon Sep 17 00:00:00 2001
+From: sreenivasa murthy kolam <sreenivasamurthy.kolam@amd.com>
+Date: Mon, 22 Apr 2024 07:00:41 +0000
+Subject: [PATCH] use the LLVM_PATH and ROCMINFO_PATH for spack.
+
+---
+ amd/hipcc/bin/hipcc.pl | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+
+diff --git a/amd/hipcc/bin/hipcc.pl b/amd/hipcc/bin/hipcc.pl
+index 513a427..ffeafaa 100755
+--- a/amd/hipcc/bin/hipcc.pl
++++ b/amd/hipcc/bin/hipcc.pl
+@@ -160,11 +160,15 @@ if ($HIP_PLATFORM eq "amd") {
+     if($isWindows) {
+         $execExtension = ".exe";
+     }
+-    $HIPCC=get_normalized_path("$HIP_CLANG_PATH/clang++" . $execExtension);
++    # llvm_path is set inside the hip recipe
++    $LLVM_PATH= $ENV{'LLVM_PATH'};
++    $HIPCC="${LLVM_PATH}/bin/clang++" . $execExtension;
++
+ 
+     # If $HIPCC clang++ is not compiled, use clang instead
+     if ( ! -e $HIPCC ) {
+-        $HIPCC=get_normalized_path("$HIP_CLANG_PATH/clang" . $execExtension);
++        $LLVM_PATH= $ENV{'LLVM_PATH'};
++        $HIPCC="${LLVM_PATH}/bin/clang" . $execExtension;
+         $HIPLDFLAGS = "--driver-mode=g++";
+     }
+     # to avoid using dk linker or MSVC linker
+@@ -484,7 +488,8 @@ if($HIP_PLATFORM eq "amd"){
+             $targetsStr = $ENV{HCC_AMDGPU_TARGET};
+         } elsif (not $isWindows) {
+             # Else try using rocm_agent_enumerator
+-            $ROCM_AGENT_ENUM = "${ROCM_PATH}/bin/rocm_agent_enumerator";
++            $ROCMINFO_PATH = $ENV{'ROCMINFO_PATH'} // $ROCMINFO_PATH;
++            $ROCM_AGENT_ENUM = "${ROCMINFO_PATH}/bin/rocm_agent_enumerator";
+             $targetsStr = `${ROCM_AGENT_ENUM} -t GPU`;
+             $targetsStr =~ s/\n/,/g;
+         }
+-- 
+2.39.3
+

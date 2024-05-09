@@ -1,0 +1,14 @@
+diff --git a/rocm-openmp-extras/llvm-project/openmp/libomptarget/CMakeLists.txt b/rocm-openmp-extras/llvm-project/openmp/libomptarget/CMakeLists.txt
+index e8b5696..ea0e835 100644
+--- a/rocm-openmp-extras/llvm-project/openmp/libomptarget/CMakeLists.txt
++++ b/rocm-openmp-extras/llvm-project/openmp/libomptarget/CMakeLists.txt
+@@ -122,7 +122,8 @@ find_path (
+     ${CMAKE_BINARY_DIR}/runtime/src
+   )
+ 
+-include_directories(${LIBOMPTARGET_INCLUDE_DIR} ${LIBOMP_OMP_TOOLS_INCLUDE_DIR})
++include_directories(${LIBOMPTARGET_INCLUDE_DIR} ${LIBOMP_OMP_TOOLS_INCLUDE_DIR} ${HSAKMT_INC_PATH})
++link_directories(${HSAKMT_LIB64} ${HSAKMT_LIB} ${LIBDRM_LIB} ${NUMACTL_DIR}/lib)
+ 
+ # Various LLVM_TOOLS are needed to build libomptarget
+ find_package(LLVM QUIET CONFIG PATHS
