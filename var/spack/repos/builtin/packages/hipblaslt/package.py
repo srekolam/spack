@@ -11,12 +11,13 @@ class Hipblaslt(CMakePackage):
     and extends functionalities beyond a traditional BLAS library"""
 
     homepage = "https://github.com/ROCm/hipBLASLt"
-    url = "https://github.com/ROCm/hipBLASLt/archive/refs/tags/rocm-6.1.1.tar.gz"
+    url = "https://github.com/ROCm/hipBLASLt/archive/refs/tags/rocm-6.1.2.tar.gz"
     git = "https://github.com/ROCm/hipBLASLt.git"
 
     maintainers("srekolam", "afzpatel", "renjithravindrankannath")
 
     license("MIT")
+    version("6.1.2", sha256="fcfe950f7b87c421565abe090b2de6f463afc1549841002f105ecca7bbbf59e5")
     version("6.1.1", sha256="1e21730ade59b5e32432fa0981383f689a380b1ffc92fe950822722da9521a72")
     version("6.1.0", sha256="90fc2f2c9e11c87e0529e824e4b0561dbc850f8ffa21be6932ae63cbaa27cdf0")
     version("6.0.2", sha256="e281a1a7760fab8c3e0baafe17950cf43c422184e3226e3c14eb06e50c69d421")
